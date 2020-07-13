@@ -32,7 +32,7 @@ router.get('/register', (req, res) => {
     return res.redirect('/');
   }
 
-  return res.render('auth/register', { errors: req.flash('errors') });
+  return res.render('auth/register');
 });
 
 // router.post('/register', (req, res, next) => {
@@ -56,17 +56,17 @@ router.get('/register', (req, res) => {
 router.get('/login', (req, res) => {
   console.log('login', req.session);
   if (req.isAuthenticated()) {
-    return res.render('main/home');
+    return res.redirect('/');
   }
   console.log('login');
-  return res.render('auth/login', { errors: req.flash('errors') });
+  return res.render('auth/login');
 });
 
 router.post(
-  '/local- login',
-  passport.authenticate('local', {
-    successRedirect: 'main/home',
-    failureRedirect: 'api/users/login',
+  '/login',
+  passport.authenticate('local-login', {
+    successRedirect: '/',
+    failureRedirect: '/api/users/login',
     failureFlash: true
   })
 );

@@ -17,14 +17,7 @@ const usersRouter = require('./routes/users/usersRoutes');
 
 const app = express();
 
-mongoose
-  .connect(proces.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-  })
-  .then(() => console.log('MongoDB Connected'))
-  .catch((err) => console.log(`MongoDB Error: ${err}`));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,9 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
+
 app.use(
   session({
     resave: false,
@@ -53,6 +44,10 @@ app.use(
   })
 );
 
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use((req, res, next) => {
   res.locals.user = req.user;
   res.locals.errors = req.flash('errors');
@@ -60,13 +55,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
+
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -78,5 +72,17 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.use('/', indexRouter);
+app.use('/api/users', usersRouter);
+
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+  })
+  .then(() => console.log('MongoDB Connected'))
+  .catch((err) => console.log(`MongoDB Error: ${err}`));
 
 module.exports = app;
